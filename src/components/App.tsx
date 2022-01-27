@@ -128,7 +128,6 @@ import {
   isInitializedImageElement,
   isLinearElement,
   isLinearElementType,
-  isTextBindableContainer,
 } from "../element/typeChecks";
 import {
   ExcalidrawBindableElement,
@@ -167,7 +166,7 @@ import { renderScene } from "../renderer";
 import { invalidateShapeForElement } from "../renderer/renderElement";
 import {
   calculateScrollCenter,
-  getElementContainingPosition,
+  getTextBindableContainerAtPosition,
   getElementsAtPosition,
   getElementsWithinSelection,
   getNormalizedZoom,
@@ -2104,18 +2103,14 @@ class App extends React.Component<AppProps, AppState> {
 
     // bind to container when shouldBind is true or
     // clicked on center of container
-    let container =
+    const container =
       shouldBind || parentCenterPosition
-        ? getElementContainingPosition(
+        ? getTextBindableContainerAtPosition(
             this.scene.getElements().filter((ele) => !isTextElement(ele)),
             sceneX,
             sceneY,
           )
         : null;
-
-    if (container && !isTextBindableContainer(container)) {
-      container = null;
-    }
 
     let existingTextElement = this.getTextElementAtPosition(sceneX, sceneY);
 
@@ -5161,7 +5156,7 @@ class App extends React.Component<AppProps, AppState> {
     canvas: HTMLCanvasElement | null,
     scale: number,
   ) {
-    const elementClickedInside = getElementContainingPosition(
+    const elementClickedInside = getTextBindableContainerAtPosition(
       this.scene
         .getElementsIncludingDeleted()
         .filter((element) => !isTextElement(element)),
