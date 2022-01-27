@@ -18,6 +18,45 @@ const tab = "    ";
 const mouse = new Pointer("mouse");
 
 describe("textWysiwyg", () => {
+  describe("start text editing", () => {
+    const { h } = window;
+    beforeEach(async () => {
+      await render(<ExcalidrawApp />);
+      h.elements = [];
+    });
+
+    it("should always prefer editing selected text element", async () => {
+      const line = API.createElement({
+        type: "line",
+        width: 100,
+        height: 0,
+        points: [
+          [0, 0],
+          [100, 0],
+        ],
+      });
+      const textSize = 20;
+      const text = API.createElement({
+        type: "text",
+        text: "ola",
+        x: line.width / 2 - textSize / 2,
+        y: -textSize / 2,
+        width: textSize,
+        height: textSize,
+      });
+      h.elements = [text, line];
+
+      API.setSelectedElements([text]);
+
+      Keyboard.keyPress(KEYS.ENTER);
+
+      expect(h.state.editingElement?.id).toBe(text.id);
+      expect(
+        (h.state.editingElement as ExcalidrawTextElement).containerId,
+      ).toBe(null);
+    });
+  });
+
   describe("Test unbounded text", () => {
     let textarea: HTMLTextAreaElement;
     let textElement: ExcalidrawTextElement;

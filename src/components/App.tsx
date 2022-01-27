@@ -2010,6 +2010,7 @@ class App extends React.Component<AppProps, AppState> {
   ): NonDeleted<ExcalidrawTextElement> | null {
     const element = this.getElementAtPosition(x, y, {
       includeBoundTextElement: true,
+      preferSelected: true,
     });
 
     if (element && isTextElement(element) && !element.isDeleted) {
