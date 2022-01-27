@@ -128,6 +128,7 @@ import {
   isInitializedImageElement,
   isLinearElement,
   isLinearElementType,
+  isTextBindableContainer,
 } from "../element/typeChecks";
 import {
   ExcalidrawBindableElement,
@@ -2102,7 +2103,7 @@ class App extends React.Component<AppProps, AppState> {
 
     // bind to container when shouldBind is true or
     // clicked on center of container
-    const container =
+    let container =
       shouldBind || parentCenterPosition
         ? getElementContainingPosition(
             this.scene.getElements().filter((ele) => !isTextElement(ele)),
@@ -2110,6 +2111,10 @@ class App extends React.Component<AppProps, AppState> {
             sceneY,
           )
         : null;
+
+    if (container && !isTextBindableContainer(container)) {
+      container = null;
+    }
 
     let existingTextElement = this.getTextElementAtPosition(sceneX, sceneY);
 
@@ -2122,6 +2127,7 @@ class App extends React.Component<AppProps, AppState> {
         ) as ExcalidrawTextElement;
       }
     }
+
     if (!existingTextElement && container) {
       const fontString = {
         fontSize: this.state.currentItemFontSize,

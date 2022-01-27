@@ -10,6 +10,7 @@ import {
   ExcalidrawTextElementWithContainer,
 } from "./types";
 import * as textElementUtils from "./textElement";
+import { API } from "../tests/helpers/api";
 // Unmount ReactDOM from root
 ReactDOM.unmountComponentAtNode(document.getElementById("root")!);
 
@@ -277,6 +278,39 @@ describe("textWysiwyg", () => {
       expect(rectangle.boundElements).toStrictEqual([
         { id: text.id, type: "text" },
       ]);
+    });
+
+    it("shouldn't bind to non-text-bindable containers", async () => {
+      const line = API.createElement({
+        type: "line",
+        width: 100,
+        height: 0,
+        points: [
+          [0, 0],
+          [100, 0],
+        ],
+      });
+      h.elements = [line];
+
+      UI.clickTool("text");
+
+      mouse.clickAt(line.x + line.width / 2, line.y + line.height / 2);
+
+      const editor = document.querySelector(
+        ".excalidraw-textEditorContainer > textarea",
+      ) as HTMLTextAreaElement;
+
+      fireEvent.change(editor, {
+        target: {
+          value: "Hello World!",
+        },
+      });
+      fireEvent.keyDown(editor, { key: KEYS.ESCAPE });
+      editor.dispatchEvent(new Event("input"));
+
+      expect(line.boundElements).toBe(null);
+      expect(h.elements[1].type).toBe("text");
+      expect((h.elements[1] as ExcalidrawTextElement).containerId).toBe(null);
     });
 
     it("should update font family correctly on undo/redo by selecting bounded text when font family was updated", async () => {
