@@ -84,6 +84,7 @@ const LibraryMenuItems = ({
   }, [selectedItems, onRemoveFromLibrary, resetLibrary]);
 
   const [showRemoveLibAlert, setShowRemoveLibAlert] = useState(false);
+  const showLibraryHeader = false;
 
   const isMobile = useIsMobile();
 
@@ -276,40 +277,30 @@ const LibraryMenuItems = ({
   const publishedItems = libraryItems.filter(
     (item) => item.status === "published",
   );
-  const unpublishedItems = [
-    // append pending library item
-    ...(pendingElements.length
-      ? [{ id: null, elements: pendingElements }]
-      : []),
-    ...libraryItems.filter((item) => item.status !== "published"),
-  ];
 
   return (
     <div className="library-menu-items-container">
       {showRemoveLibAlert && renderRemoveLibAlert()}
-      <div className="layer-ui__library-header" key="library-header">
-        {renderLibraryActions()}
-        <a
-          href={`${process.env.REACT_APP_LIBRARY_URL}?target=${
-            window.name || "_blank"
-          }&referrer=${referrer}&useHash=true&token=${id}&theme=${theme}&version=${
-            VERSIONS.excalidrawLibrary
-          }`}
-          target="_excalidraw_libraries"
-        >
-          {t("labels.libraries")}
-        </a>
-      </div>
       <Stack.Col
         className="library-menu-items-container__items"
         align="start"
         gap={1}
       >
-        <>
-          <div className="separator">{t("labels.personalLib")}</div>
-          {renderLibrarySection(unpublishedItems)}
-        </>
-
+        {showLibraryHeader && (
+          <div className="layer-ui__library-header" key="library-header">
+            {renderLibraryActions()}
+            <a
+              href={`${process.env.REACT_APP_LIBRARY_URL}?target=${
+                window.name || "_blank"
+              }&referrer=${referrer}&useHash=true&token=${id}&theme=${theme}&version=${
+                VERSIONS.excalidrawLibrary
+              }`}
+              target="_excalidraw_libraries"
+            >
+              {t("labels.libraries")}
+            </a>
+          </div>
+        )}
         <>
           <div className="separator">{t("labels.excalidrawLib")} </div>
 
