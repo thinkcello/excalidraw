@@ -305,10 +305,6 @@ const LibraryMenuItems = ({
         align="start"
         gap={1}
       >
-        <>
-          <div className="separator">{t("labels.personalLib")}</div>
-          {renderLibrarySection(unpublishedItems)}
-        </>
 
         <>
           <div className="separator">{t("labels.excalidrawLib")} </div>
